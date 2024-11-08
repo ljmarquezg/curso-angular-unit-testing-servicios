@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import {Calculator} from './calculator';
 
 @Component({
   selector: 'app-root',
@@ -10,4 +11,10 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'angular-unit-test';
+
+  ngOnInit() {
+    const calculator = new Calculator();
+    const respuesta = calculator.multiply(3, 3);
+    console.log(respuesta === 9)
+  }
 }
