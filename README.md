@@ -1,21 +1,10 @@
-# NgTestingServices
+# AngularUnitTest
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.2.3.
-
-## WSL
-
-```sh
-sudo apt update && sudo apt -y upgrade && sudo apt -y autoremove
-
-wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-sudo apt -y install ./google-chrome-stable_current_amd64.deb
-
-google-chrome --version
-```
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.2.9.
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
 ## Code scaffolding
 
@@ -35,4 +24,4 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 
 ## Further help
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
