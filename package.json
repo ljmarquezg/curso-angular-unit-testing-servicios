@@ -7,6 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test --watch  --browsers ChromeHeadless",
+    "test:coverage": "ng test --watch  --browsers ChromeHeadless --code-coverage",
     "serve:ssr:angular-unit-test": "node dist/angular-unit-test/server/server.mjs"
   },
   "private": true,
@@ -39,6 +40,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "karma-mocha-reporter": "^2.2.5",
     "typescript": "~5.5.2"
   }
 }
