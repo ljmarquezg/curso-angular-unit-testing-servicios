@@ -11,6 +11,7 @@ describe('Calculator', () => {
     expect(result).toBe(3);
   });
 
+describe('test by multiply', () => {
   it('#multiply should return 9', () => {
     //Assert
     const calculator = new Calculator();
@@ -20,14 +21,32 @@ describe('Calculator', () => {
     expect(result).toBe(9);
   });
 
-  it('#divide should return numbers', () => {
+  it('#multiply should return 0', () => {
     //Assert
     const calculator = new Calculator();
-    //Act & Assert
-    expect(calculator.divide(3, 3)).toBe(1);
-    expect(calculator.divide(6, 3)).toBe(2);
+    //Act
+    const result = calculator.multiply(3, 0);
+    //Assert
+    expect(result).toBe(0);
   });
+});
 
+  describe('test by divide', () => {
+    it('#divide should return numbers', () => {
+      //Assert
+      const calculator = new Calculator();
+      //Act & Assert
+      expect(calculator.divide(3, 3)).toBe(1);
+      expect(calculator.divide(6, 3)).toBe(2);
+    });
+
+    it('#divide by zero', () => {
+      //Assert
+      const calculator = new Calculator();
+      //Act & Assert
+      expect(calculator.divide(3, 0)).toBe(null);
+    });
+  });
   it('test matchers', () => {
     let name = 'Nicolas';
     let name2;
@@ -47,4 +66,4 @@ describe('Calculator', () => {
     expect(['apples', 'oranges', 'pears']).toContain('oranges');
   })
 
-})
+});
