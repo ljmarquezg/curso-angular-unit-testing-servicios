@@ -7,6 +7,15 @@ import { ValueService } from './value.service';
 describe('MasterService', () => {
   let masterService: MasterService;
 
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        ValueService,
+      ]
+    });
+    // valueSerservice
+  });
+
   it('should be created', () => {
     const valueService = new ValueService();
     masterService = new MasterService(valueService);
