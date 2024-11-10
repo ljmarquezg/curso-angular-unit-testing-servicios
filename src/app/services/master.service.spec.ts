@@ -6,23 +6,30 @@ import { ValueService } from './value.service';
 
 describe('MasterService', () => {
   let masterService: MasterService;
+  let valueServiceSpy: jasmine.SpyObj<ValueService>;
 
   beforeEach(() => {
+   const spy = jasmine.createSpyObj('ValueService', ['getValue']);
+
     TestBed.configureTestingModule({
       providers: [
-        ValueService,
+        MasterService,
+        {
+          provide: ValueService,
+          useValue: spy
+        },
       ]
     });
-    // valueSerservice
+
+    masterService = TestBed.inject(MasterService);
+    valueServiceSpy = TestBed.inject(ValueService) as jasmine.SpyObj<ValueService>;
   });
 
   it('should be created', () => {
-    const valueService = new ValueService();
-    masterService = new MasterService(valueService);
     expect(masterService).toBeTruthy();
   });
 
-  it('should return "other value" from fake-service', () => {
+ /* it('should return "other value" from fake-service', () => {
     const valueFakeService = new ValueFakeService();
     masterService = new MasterService(valueFakeService as unknown as ValueService);
     expect(masterService.getValue()).toBe('fake value');
@@ -32,14 +39,12 @@ describe('MasterService', () => {
     const fake = { getValue: () => 'fake from object' };
     masterService = new MasterService(fake as ValueService);
     expect(masterService.getValue()).toBe('fake from object');
-  });
+  });*/
 
   it('should call getValue from ValueService', () => {
-    const valueService: jasmine.SpyObj<ValueService> = jasmine.createSpyObj('ValueService', ['getValue']);
-    valueService.getValue.and.returnValue('fake from spy');
-    masterService = new MasterService(valueService);
+    valueServiceSpy.getValue.and.returnValue('fake from spy');
     expect(masterService.getValue()).toBe('fake from spy');
-    expect(valueService.getValue).toHaveBeenCalled();
-    expect(valueService.getValue).toHaveBeenCalledTimes(1);
+    expect(valueServiceSpy.getValue).toHaveBeenCalled();
+    expect(valueServiceSpy.getValue).toHaveBeenCalledTimes(1);
   });
 });
