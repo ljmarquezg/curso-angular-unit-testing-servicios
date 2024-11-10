@@ -1,1 +1,12 @@
 <h1>Products Component</h1>
+<div class="my-grid">
+  @for (product of products(); track product.id) {
+    <div class="product">
+      <img
+        [src]="product.images[0]"
+        alt="{{ product.title }}"
+      >
+      <h6>{{ product.title }}</h6>
+    </div>
+  }
+</div>
