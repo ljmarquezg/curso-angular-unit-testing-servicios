@@ -1,14 +1,13 @@
 import { HttpClientTestingModule, HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { mock } from 'node:test';
 import { environment } from '../../environments/environment';
-import { generateManyProducts } from '../models/product.mock';
+import { generateManyProducts, generateOneProduct } from '../models/product.mock';
 import { Product } from '../models/product.model';
 import { ProductsService } from './products.service';
 
 import { ValueService } from './value.service';
 
-describe('ProductsService', () => {
+fdescribe('ProductsService', () => {
   let productService: ProductsService;
   let httpController: HttpTestingController;
   beforeEach(() => {
@@ -38,6 +37,63 @@ describe('ProductsService', () => {
         //Assert
         expect(products).toBe(mockProducts);
         expect(products.length).toBe(mockProducts.length);
+        doneFn();
+      });
+
+      const url = environment.API_URL + '/api/v1/products';
+      const req = httpController.expectOne(url);
+      req.flush(mockProducts);
+      httpController.verify();
+    });
+  });
+
+  describe('getAll', () => {
+    it('should return a product list', (doneFn) => {
+      //Arrange
+      const mockProducts: Product[] = [
+        {
+          ...generateOneProduct(),
+          price: 100, // 100 * 0.19 = 19,
+          taxes: 19
+        },
+        {
+          ...generateOneProduct(),
+          price: 200, // 200 * 0.19 = 38
+          taxes: 38
+        }
+      ]
+      //Act
+      productService.getAll().subscribe(products => {
+        //Assert
+        expect(products).toEqual(mockProducts);
+        expect(products.length).toEqual(mockProducts.length);
+        doneFn();
+      });
+
+      const url = environment.API_URL + '/api/v1/products';
+      const req = httpController.expectOne(url);
+      req.flush(mockProducts);
+      httpController.verify();
+    });
+
+    it('should return a product list with taxes', (doneFn) => {
+      //Arrange
+      const mockProducts: Product[] = [
+        {
+          ...generateOneProduct(),
+          price: 100 // 100 * 0.19 = 19
+        },
+        {
+          ...generateOneProduct(),
+          price: 200 // 200 * 0.19 = 38
+        }
+      ]
+      //Act
+      productService.getAll().subscribe(products => {
+        //Assert
+        expect(products.length).toEqual(mockProducts.length);
+        expect(products[0].taxes).toEqual(19);
+        expect(products[1].taxes).toEqual(38);
         doneFn();
       });
 
