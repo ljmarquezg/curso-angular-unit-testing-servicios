@@ -2,6 +2,7 @@ import { HttpClientTestingModule, HttpTestingController, provideHttpClientTestin
 import { TestBed } from '@angular/core/testing';
 import { mock } from 'node:test';
 import { environment } from '../../environments/environment';
+import { generateManyProducts } from '../models/product.mock';
 import { Product } from '../models/product.model';
 import { ProductsService } from './products.service';
 
@@ -31,19 +32,7 @@ describe('ProductsService', () => {
   describe('getAllSimple', () => {
     it('should return a product list', (doneFn) => {
       //Arrange
-      const mockProducts: Product[] = [
-        {
-          id: '1',
-          title: 'Product 1',
-          description: 'Description 1',
-          price: 100,
-          category: {
-            id: 1,
-            name: 'Category 1'
-          },
-          images: ['img1', 'img2']
-        }
-      ];
+      const mockProducts: Product[] = generateManyProducts(3);
       //Act
       productService.getAllSimple().subscribe(products => {
         //Assert
