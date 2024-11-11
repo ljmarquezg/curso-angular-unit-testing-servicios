@@ -81,7 +81,7 @@ export class ProductsService {
     return this.http.put<Product>(`${this.apiUrl}/products/${id}`, dto);
   }
 
-  delete(id: string) {
+  delete(id: string): Observable<boolean> {
     return this.http.delete<boolean>(`${this.apiUrl}/products/${id}`);
   }
 }
