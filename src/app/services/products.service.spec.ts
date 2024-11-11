@@ -5,9 +5,7 @@ import { generateManyProducts, generateOneProduct } from '../models/product.mock
 import { Product } from '../models/product.model';
 import { ProductsService } from './products.service';
 
-import { ValueService } from './value.service';
-
-fdescribe('ProductsService', () => {
+describe('ProductsService', () => {
   let productService: ProductsService;
   let httpController: HttpTestingController;
   beforeEach(() => {
@@ -86,6 +84,14 @@ fdescribe('ProductsService', () => {
         {
           ...generateOneProduct(),
           price: 200 // 200 * 0.19 = 38
+        },
+        {
+          ...generateOneProduct(),
+          price: 0, // 200 * 0.19 = 38
+        },
+        {
+          ...generateOneProduct(),
+          price: -100, // 100 * 0.19 = -19
         }
       ]
       //Act
@@ -94,12 +100,47 @@ fdescribe('ProductsService', () => {
         expect(products.length).toEqual(mockProducts.length);
         expect(products[0].taxes).toEqual(19);
         expect(products[1].taxes).toEqual(38);
+        expect(products[2].taxes).toEqual(0);
+        expect(products[3].taxes).toEqual(0);
         doneFn();
       });
 
       const url = environment.API_URL + '/api/v1/products';
       const req = httpController.expectOne(url);
       req.flush(mockProducts);
+      httpController.verify();
+    });
+
+    it('should generate a request with limit=10 and offset = 3', (doneFn) => {
+      //Arrange
+      const mockProducts: Product[] = [
+        {
+          ...generateOneProduct(),
+          price: 100, // 100 * 0.19 = 19,
+          taxes: 19
+        },
+        {
+          ...generateOneProduct(),
+          price: 200, // 200 * 0.19 = 38
+          taxes: 38
+        }
+      ];
+      const limit = 10;
+      const offset = 3;
+      //Act
+      productService.getAll(limit, offset).subscribe(products => {
+        //Assert
+        expect(products).toEqual(mockProducts);
+        expect(products.length).toEqual(mockProducts.length);
+        doneFn();
+      });
+
+      const url = environment.API_URL + `/api/v1/products?limit=${limit}&offset=${offset}`;
+      const req = httpController.expectOne(url);
+      req.flush(mockProducts);
+      const params = req.request.params;
+      expect(params.get('limit')).toEqual(limit.toString());
+      expect(params.get('offset')).toEqual(offset.toString());
       httpController.verify();
     });
   });
