@@ -2,7 +2,7 @@ import { HttpClientTestingModule, HttpTestingController, provideHttpClientTestin
 import { TestBed } from '@angular/core/testing';
 import { environment } from '../../environments/environment';
 import { generateManyProducts, generateOneProduct } from '../models/product.mock';
-import { Product } from '../models/product.model';
+import { CreateProductDTO, Product } from '../models/product.model';
 import { ProductsService } from './products.service';
 
 describe('ProductsService', () => {
@@ -20,6 +20,10 @@ describe('ProductsService', () => {
     });
     productService = TestBed.inject(ProductsService);
     httpController = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    httpController.verify();
   });
 
   it('should be created', () => {
@@ -71,7 +75,6 @@ describe('ProductsService', () => {
       const url = environment.API_URL + '/api/v1/products';
       const req = httpController.expectOne(url);
       req.flush(mockProducts);
-      httpController.verify();
     });
 
     it('should return a product list with taxes', (doneFn) => {
@@ -108,7 +111,6 @@ describe('ProductsService', () => {
       const url = environment.API_URL + '/api/v1/products';
       const req = httpController.expectOne(url);
       req.flush(mockProducts);
-      httpController.verify();
     });
 
     it('should generate a request with limit=10 and offset = 3', (doneFn) => {
@@ -141,7 +143,28 @@ describe('ProductsService', () => {
       const params = req.request.params;
       expect(params.get('limit')).toEqual(limit.toString());
       expect(params.get('offset')).toEqual(offset.toString());
-      httpController.verify();
+    });
+
+    it('should create a product', (doneFn) => {
+      const mockData = generateOneProduct();
+      const dto: CreateProductDTO = {
+        title: 'new Product',
+        description: 'new product description',
+        images: ['img'],
+        price: 100,
+        categoryId: 12
+      }
+
+      productService.create(dto).subscribe((product: Product) => {
+        expect(product).toEqual(mockData);
+        doneFn();
+      });
+
+      const url = environment.API_URL + '/api/v1/products';
+      const req = httpController.expectOne(url);
+      expect(req.request.body).toEqual(dto);
+      expect(req.request.method).toEqual('POST');
+      req.flush(mockData);
     });
   });
 });
