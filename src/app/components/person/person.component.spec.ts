@@ -1,4 +1,4 @@
-import { DebugElement } from '@angular/core';
+import { Component, DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Person } from '../../models/person.model';
@@ -11,9 +11,9 @@ describe('PersonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PersonComponent]
-    })
-    .compileComponents();
+        imports: [PersonComponent]
+      })
+      .compileComponents();
   });
 
   beforeEach(() => {
@@ -50,7 +50,7 @@ describe('PersonComponent', () => {
     expect(component.person.name).toBe('Juan');
   });
 
-  it ('should have <h3> with "Hola, {person.name}"', () => {
+  it('should have <h3> with "Hola, {person.name}"', () => {
     //Arrange
     component.person = new Person('Valentina', 'Pérez', 25, 80, 1.75);
     const expectedMsg = `Hola, ${component.person.name}`;
@@ -63,7 +63,7 @@ describe('PersonComponent', () => {
     expect(h3?.textContent).toBe(expectedMsg);
   });
 
-  it ('should have <p> with "Mi altura es {person.height}"', () => {
+  it('should have <p> with "Mi altura es {person.height}"', () => {
     //Arrange
     component.person = new Person('Valentina', 'Pérez', 25, 80, 1.75);
     const expectedMsg = `Mi altura es: ${component.person.height}`;
@@ -77,7 +77,7 @@ describe('PersonComponent', () => {
     expect(h3?.textContent).toContain(component.person.height);
   });
 
-  it ('should update button text IMC calculate IMC', () => {
+  it('should update button text IMC calculate IMC', () => {
     //Arrange
     const expectedMsg = 'Overweight';
     component.person = new Person('Valentina', 'Pérez', 25, 80, 1.75); // Overweigh
@@ -91,7 +91,7 @@ describe('PersonComponent', () => {
     expect(btn.textContent).toContain(expectedMsg);
   });
 
-  it ('should calculate IMC when clicking calculate button', () => {
+  it('should calculate IMC when clicking calculate button', () => {
     //Arrange
     const expectedMsg = 'Overweight';
     component.person = new Person('Valentina', 'Pérez', 25, 80, 1.75); // Overweigh
@@ -112,7 +112,7 @@ describe('PersonComponent', () => {
       // Arrange
       const expectedPerson = new Person('John', 'Doe', 30, 81, 1.72);
       component.person = expectedPerson;
-      const buttonDebug = fixture.debugElement.query(By.css('.bnt-choose'))
+      const buttonDebug = fixture.debugElement.query(By.css('.btn-choose'));
 
       let selectedPerson: Person | undefined;
       component.onSelected.subscribe(
@@ -127,5 +127,66 @@ describe('PersonComponent', () => {
       // Assert
       expect(selectedPerson).toBe(expectedPerson);
     });
-  })
+  });
+});
+
+@Component({
+    standalone: true,
+    imports: [PersonComponent],
+    template: `
+      <app-person
+        [person]="person"
+        (onSelected)="onSelected($event)"
+      ></app-person>`
+  }
+)
+export class HostComponent {
+  person = new Person('Santiago', 'Molina', 13, 40, 1.5);
+  selectedPerson: Person | undefined;
+
+  onSelected(person: Person) {
+    this.selectedPerson = person;
+  }
+}
+
+describe('PersonComponent from HostComponent', () => {
+  let component: HostComponent;
+  let fixture: ComponentFixture<HostComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      })
+      .compileComponents();
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(HostComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should have a person name: "Santiago"', () => {
+    // Arrange
+    const expectedName = component.person.name;
+    const personDebug = fixture.debugElement.query(By.css('app-person h3'));
+    const h3: HTMLElement = personDebug.nativeElement;
+    // Act
+    fixture.detectChanges();
+    // Assert
+    expect(h3.textContent).toContain(expectedName);
+  });
+
+  it('should have a person name: "Santiago"', () => {
+    // Arrange
+    const buttonDebug = fixture.debugElement.query(By.css('app-person .btn-choose'));
+    // Act
+    buttonDebug.triggerEventHandler('click', null);
+    fixture.detectChanges();
+    // Assert
+    expect(component.selectedPerson).toBe(component.person);
+  });
 });
