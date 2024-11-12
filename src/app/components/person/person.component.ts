@@ -9,9 +9,10 @@ import { Person } from '../../models/person.model';
   styleUrl: './person.component.scss'
 })
 export class PersonComponent {
-  @Input() person: Person = new Person('Juan', 'Perez', 30, 81, 1.72);
+  @Input() person!: Person;
+  imc: string = '';
 
-  constructor() {
-   // this.person = new Person('John', 'Doe', 30, 81, 1.72);
+  calcIMC() {
+    this.imc = this.person.calcIMC();
   }
 }

@@ -76,4 +76,34 @@ describe('PersonComponent', () => {
     expect(h3?.textContent).toEqual(expectedMsg);
     expect(h3?.textContent).toContain(component.person.height);
   });
+
+  it ('should update button text IMC calculate IMC', () => {
+    //Arrange
+    const expectedMsg = 'Overweight';
+    component.person = new Person('Valentina', 'Pérez', 25, 80, 1.75); // Overweigh
+    const debugElement: DebugElement = fixture.debugElement;
+    const btnDebug = debugElement.query(By.css('button.btn-imc'));
+    const btn: HTMLElement = btnDebug.nativeElement;
+    // Act
+    component.calcIMC();
+    fixture.detectChanges();
+    // Assert
+    expect(btn.textContent).toContain(expectedMsg);
+  });
+
+  it ('should calculate IMC when clicking calculate button', () => {
+    //Arrange
+    const expectedMsg = 'Overweight';
+    component.person = new Person('Valentina', 'Pérez', 25, 80, 1.75); // Overweigh
+    const debugElement: DebugElement = fixture.debugElement;
+    const btnDebug = debugElement.query(By.css('button.btn-imc'));
+    const btnElement: HTMLElement = btnDebug.nativeElement;
+    spyOn(component, 'calcIMC').and.callThrough();
+    // Act
+    btnDebug.triggerEventHandler('click', null);
+    fixture.detectChanges();
+    // Assert
+    expect(component.calcIMC).toHaveBeenCalled();
+    expect(btnElement.textContent).toContain(expectedMsg);
+  });
 });
