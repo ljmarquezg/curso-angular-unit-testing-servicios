@@ -13,4 +13,13 @@ import { PersonComponent } from '../person/person.component';
 })
 export class PeopleComponent {
   person: Person = new Person('Valentina', 'Pérez', 25, 80, 1.75);
+  selectedPerson: Person | undefined;
+  people: Person[] = [
+    new Person('Juana', 'Gimenez', 20, 66, 1.50),
+    new Person('Pedro', 'Chapapote', 35, 88, 1.92),
+    ];
+
+  choose(person: Person) {
+    this.selectedPerson = person;
+  }
 }

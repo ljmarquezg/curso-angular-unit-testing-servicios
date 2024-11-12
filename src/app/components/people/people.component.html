@@ -1,5 +1,22 @@
 <section class="container">
-  <app-person
-    [person]="person"
-  ></app-person>
+  <h3>Selected Person</h3>
+  <div class="selected-person">
+    @if(selectedPerson) {
+      <ul>
+        <li>
+          Name: {{selectedPerson.name}}
+        </li>
+        <li>
+          Age: {{selectedPerson.age}}
+        </li>
+      </ul>
+    }
+  </div>
+  <h4>Count: {{people.length}}</h4>
+  @for(person of people; track person.name) {
+    <app-person
+      [person]="person"
+      (onSelected)="choose($event)"
+    ></app-person>
+  }
 </section>
