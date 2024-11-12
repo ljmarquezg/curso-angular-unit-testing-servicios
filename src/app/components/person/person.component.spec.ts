@@ -106,4 +106,26 @@ describe('PersonComponent', () => {
     expect(component.calcIMC).toHaveBeenCalled();
     expect(btnElement.textContent).toContain(expectedMsg);
   });
+
+  describe('onClick', () => {
+    it('should raise selected event when do click', (doneFn) => {
+      // Arrange
+      const expectedPerson = new Person('John', 'Doe', 30, 81, 1.72);
+      component.person = expectedPerson;
+      const buttonDebug = fixture.debugElement.query(By.css('.bnt-choose'))
+
+      let selectedPerson: Person | undefined;
+      component.onSelected.subscribe(
+        (person: Person) => {
+          selectedPerson = person;
+          doneFn();
+        }
+      );
+      // Act
+      buttonDebug.triggerEventHandler('click', null);
+      fixture.detectChanges();
+      // Assert
+      expect(selectedPerson).toBe(expectedPerson);
+    });
+  })
 });
