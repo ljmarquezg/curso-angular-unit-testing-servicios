@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { Person } from '../../models/person.model';
 
 @Component({
@@ -9,7 +9,7 @@ import { Person } from '../../models/person.model';
   styleUrl: './person.component.scss'
 })
 export class PersonComponent {
-  //protected person = inject(Person);
+  @Input() person: Person = new Person('Juan', 'Perez', 30, 81, 1.72);
 
   constructor() {
    // this.person = new Person('John', 'Doe', 30, 81, 1.72);
