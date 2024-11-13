@@ -1,12 +1,10 @@
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { defer, of, throwError } from 'rxjs';
+import { asyncData, asyncError, mockObservable } from '../../../testing';
 import { generateManyProducts } from '../../models/product.mock';
 import { Product } from '../../models/product.model';
 import { ProductsService } from '../../services/products.service';
 import { ValueService } from '../../services/value.service';
-
 import { ProductsComponent } from './products.component';
 
 describe('ProductsComponent', () => {
@@ -39,7 +37,7 @@ describe('ProductsComponent', () => {
     productsService = TestBed.inject(ProductsService) as jasmine.SpyObj<ProductsService>;
     valueService = TestBed.inject(ValueService) as jasmine.SpyObj<ValueService>;
     const productsMock: Product[] = generateManyProducts(3);
-    productsService.getAll.and.returnValue(of(productsMock));
+    productsService.getAll.and.returnValue(mockObservable(productsMock));
 
     fixture.detectChanges();
   });
@@ -55,7 +53,7 @@ describe('ProductsComponent', () => {
   it('should return product list from service', () => {
     // Arrange
     const mockProducts: Product[] = generateManyProducts(3);
-    productsService.getAll.and.returnValue(of(mockProducts));
+    productsService.getAll.and.returnValue(mockObservable(mockProducts));
     //Act
     const countPrev = component.products().length;
     component.getAllProducts();
@@ -71,7 +69,7 @@ describe('ProductsComponent', () => {
     it('should show success status', fakeAsync(() => {
         // Arrange
         const productsMock = generateManyProducts(3);
-        productsService.getAll.and.returnValue(defer(() => Promise.resolve(productsMock)));
+        productsService.getAll.and.returnValue(asyncData(productsMock));
         const debugElement = fixture.debugElement;
         const buttonDebugElement = debugElement.query(By.css('button.load-products'));
         //Act
@@ -89,7 +87,7 @@ describe('ProductsComponent', () => {
 
     it('should show error status', fakeAsync(() => {
         // Arrange
-        productsService.getAll.and.returnValue(defer(() => Promise.reject(new Error('Error'))));
+        productsService.getAll.and.returnValue(asyncError(new Error('Error')));
         const debugElement = fixture.debugElement;
         const buttonDebugElement = debugElement.query(By.css('button.load-products'));
         //Act
