@@ -5,22 +5,30 @@ import { defer, of, throwError } from 'rxjs';
 import { generateManyProducts } from '../../models/product.mock';
 import { Product } from '../../models/product.model';
 import { ProductsService } from '../../services/products.service';
+import { ValueService } from '../../services/value.service';
 
 import { ProductsComponent } from './products.component';
 
 describe('ProductsComponent', () => {
   let component: ProductsComponent;
   let fixture: ComponentFixture<ProductsComponent>;
-  let productsServiceSpy: jasmine.SpyObj<ProductsService>;
+  let productsService: jasmine.SpyObj<ProductsService>;
+  let valueService: jasmine.SpyObj<ValueService>;
 
   beforeEach(async () => {
-    productsServiceSpy = jasmine.createSpyObj('ProductsService', ['getAll']);
+    const productsServiceSpy = jasmine.createSpyObj('ProductsService', ['getAll']);
+    const valueServiceSpy = jasmine.createSpyObj('ValueService', ['getPromiseValue']);
+
     await TestBed.configureTestingModule({
         imports: [ProductsComponent],
         providers: [
           {
             provide: ProductsService,
             useValue: productsServiceSpy
+          },
+          {
+            provide: ValueService,
+            useValue: valueServiceSpy
           }
         ]
       })
@@ -28,9 +36,10 @@ describe('ProductsComponent', () => {
 
     fixture = TestBed.createComponent(ProductsComponent);
     component = fixture.componentInstance;
-    productsServiceSpy = TestBed.inject(ProductsService) as jasmine.SpyObj<ProductsService>;
+    productsService = TestBed.inject(ProductsService) as jasmine.SpyObj<ProductsService>;
+    valueService = TestBed.inject(ValueService) as jasmine.SpyObj<ValueService>;
     const productsMock: Product[] = generateManyProducts(3);
-    productsServiceSpy.getAll.and.returnValue(of(productsMock));
+    productsService.getAll.and.returnValue(of(productsMock));
 
     fixture.detectChanges();
   });
@@ -40,13 +49,13 @@ describe('ProductsComponent', () => {
   });
 
   it('should call getAllProducts', () => {
-    expect(productsServiceSpy.getAll).toHaveBeenCalled();
+    expect(productsService.getAll).toHaveBeenCalled();
   });
 
   it('should return product list from service', () => {
     // Arrange
     const mockProducts: Product[] = generateManyProducts(3);
-    productsServiceSpy.getAll.and.returnValue(of(mockProducts));
+    productsService.getAll.and.returnValue(of(mockProducts));
     //Act
     const countPrev = component.products().length;
     component.getAllProducts();
@@ -62,30 +71,85 @@ describe('ProductsComponent', () => {
     it('should show success status', fakeAsync(() => {
         // Arrange
         const productsMock = generateManyProducts(3);
-        productsServiceSpy.getAll.and.returnValue(defer(() => Promise.resolve(productsMock)));
+        productsService.getAll.and.returnValue(defer(() => Promise.resolve(productsMock)));
+        const debugElement = fixture.debugElement;
+        const buttonDebugElement = debugElement.query(By.css('button.load-products'));
         //Act
-        component.getAllProducts();
+        //component.getAllProducts();
+        buttonDebugElement.triggerEventHandler('click', null);
         fixture.detectChanges();
         expect(component.status).toBe('loading');
         tick(4000); // exec, obs, setTimeout, setInterval, setInterval, Promise
         fixture.detectChanges();
         //Assert
         expect(component.status).toBe('success');
+        expect(productsService.getAll).toHaveBeenCalled();
       })
     );
 
     it('should show error status', fakeAsync(() => {
         // Arrange
-        productsServiceSpy.getAll.and.returnValue(defer(() => Promise.reject(new Error('Error'))));
+        productsService.getAll.and.returnValue(defer(() => Promise.reject(new Error('Error'))));
+        const debugElement = fixture.debugElement;
+        const buttonDebugElement = debugElement.query(By.css('button.load-products'));
         //Act
-        component.getAllProducts();
+        //component.getAllProducts();
+        buttonDebugElement.triggerEventHandler('click', null);
         fixture.detectChanges();
         expect(component.status).toBe('loading');
+        expect(buttonDebugElement.nativeElement.disabled).toBeTrue();
         tick(3500); // exec, obs, setTimeout, setInterval, setInterval, Promise
         fixture.detectChanges();
         //Assert
         expect(component.status).toBe('error');
         expect(component.products().length).toBe(0);
+        expect(buttonDebugElement.nativeElement.disabled).toBeFalse();
+      })
+    );
+  });
+
+  describe('callPromise', () => {
+    it('should get promise value using async', async () => {
+      // Arrange
+      const rtaMsg = 'my promise string';
+      valueService.getPromiseValue.and.returnValue(Promise.resolve(rtaMsg));
+      // Act
+      await component.callPromise();
+      fixture.detectChanges();
+      // Assert
+      expect(component.rta).toBe(rtaMsg);
+      expect(valueService.getPromiseValue).toHaveBeenCalled();
+    });
+
+    it('should get promise value using fakeAsync', fakeAsync(() => {
+        // Arrange
+        const rtaMsg = 'my promise string';
+        valueService.getPromiseValue.and.returnValue(Promise.resolve(rtaMsg));
+        // Act
+        component.callPromise();
+        tick();
+        fixture.detectChanges();
+        // Assert
+        expect(component.rta).toBe(rtaMsg);
+        expect(valueService.getPromiseValue).toHaveBeenCalled();
+      })
+    );
+
+    it('should show "my promise string" when clicking load promise button ', fakeAsync(() => {
+        // Arrange
+        const rtaMsg = 'my promise string';
+        valueService.getPromiseValue.and.returnValue(Promise.resolve(rtaMsg));
+        const debugElement = fixture.debugElement;
+        const buttonDebugElement = debugElement.query(By.css('button.call-promise'));
+        buttonDebugElement.triggerEventHandler('click', null);
+        // Act
+        tick();
+        fixture.detectChanges();
+        const promiseResponseElement = debugElement.query(By.css('.promise-response'))
+        // Assert
+        expect(component.rta).toBe(rtaMsg);
+        expect(valueService.getPromiseValue).toHaveBeenCalled();
+        expect(promiseResponseElement.nativeElement.textContent).toEqual(rtaMsg);
       })
     );
   });

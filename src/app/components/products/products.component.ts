@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Product } from '../../models/product.model';
 import { ProductsService } from '../../services/products.service';
+import { ValueService } from '../../services/value.service';
 import { ProductComponent } from '../product/product.component';
 
 @Component({
@@ -14,10 +15,13 @@ import { ProductComponent } from '../product/product.component';
 })
 export class ProductsComponent implements OnInit {
   private productsService = inject(ProductsService);
+  private valueService: ValueService = inject(ValueService);
+
   products: WritableSignal<Product[]> = signal([]);
   limit: number = 10;
   offset: number = 0;
   status: 'init' | 'loading' | 'error' | 'success' = 'init';
+  rta: string = '';
 
   ngOnInit() {
     this.getAllProducts();
@@ -38,6 +42,12 @@ export class ProductsComponent implements OnInit {
         }, 3000);
       }
     });
+  }
+
+  callPromise(): void {
+    this.valueService.getPromiseValue().then((value: string) => {
+      this.rta = value;
+    })
   }
 
 }

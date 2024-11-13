@@ -1,11 +1,14 @@
 <section class="container">
   <h1>Products Component</h1>
+  <button class="call-promise" (click)="callPromise()">Call promise</button>
+  <p class="promise-response">{{rta}}</p>
   <div class="my-grid">
     @for (product of products(); track product.id) {
       <app-product [product]="product"></app-product>
     }
   </div>
   <button
+    class="load-products"
     (click)="getAllProducts()"
     [disabled]="status === 'loading'"
   >
