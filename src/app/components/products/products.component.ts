@@ -27,13 +27,15 @@ export class ProductsComponent implements OnInit {
     this.status = 'loading';
     this.productsService.getAll(this.limit, this.offset).subscribe({
       next: products => {
-        this.products.set([...this.products() , ...products]);
+        this.products.set([...this.products(), ...products]);
         this.offset += this.limit;
         this.status = 'success';
       },
       error: error => {
-        console.error(error);
-        this.status = 'error';
+        setTimeout(() => {
+          this.products.set([]);
+          this.status = 'error';
+        }, 3000);
       }
     });
   }

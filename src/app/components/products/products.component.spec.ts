@@ -1,7 +1,7 @@
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { of } from 'rxjs';
+import { defer, of, throwError } from 'rxjs';
 import { generateManyProducts } from '../../models/product.mock';
 import { Product } from '../../models/product.model';
 import { ProductsService } from '../../services/products.service';
@@ -58,4 +58,35 @@ describe('ProductsComponent', () => {
     expect(component.products().length).toBe(productDebugElement.length);
   });
 
+  describe('loading status', () => {
+    it('should show success status', fakeAsync(() => {
+        // Arrange
+        const productsMock = generateManyProducts(3);
+        productsServiceSpy.getAll.and.returnValue(defer(() => Promise.resolve(productsMock)));
+        //Act
+        component.getAllProducts();
+        fixture.detectChanges();
+        expect(component.status).toBe('loading');
+        tick(4000); // exec, obs, setTimeout, setInterval, setInterval, Promise
+        fixture.detectChanges();
+        //Assert
+        expect(component.status).toBe('success');
+      })
+    );
+
+    it('should show error status', fakeAsync(() => {
+        // Arrange
+        productsServiceSpy.getAll.and.returnValue(defer(() => Promise.reject(new Error('Error'))));
+        //Act
+        component.getAllProducts();
+        fixture.detectChanges();
+        expect(component.status).toBe('loading');
+        tick(3500); // exec, obs, setTimeout, setInterval, setInterval, Promise
+        fixture.detectChanges();
+        //Assert
+        expect(component.status).toBe('error');
+        expect(component.products().length).toBe(0);
+      })
+    );
+  });
 });
