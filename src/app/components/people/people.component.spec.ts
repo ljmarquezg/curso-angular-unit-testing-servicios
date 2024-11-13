@@ -60,12 +60,11 @@ describe('PeopleComponent', () => {
       new Person('Valentina', 'Pérez', 25, 80, 1.75)
     ];
     fixture.detectChanges();
-    const chooseButtonDebug = fixture.debugElement.query(By.css('app-person .btn-choose'))
-    const selectedPersonDebugUl = fixture.debugElement.query(By.css('app-person ul'));
-    const selectedPersonDebugLi = selectedPersonDebugUl.queryAll(By.css('app-person li'));
-    // Act
+    const chooseButtonDebug = fixture.debugElement.query(By.css('app-person .btn-choose'));
     chooseButtonDebug.triggerEventHandler('click', null);
     fixture.detectChanges();
+    const selectedPersonDebugLi = fixture.debugElement.queryAll(By.css('li'));
+    // Act
     const nameSelectedPerson = selectedPersonDebugLi[0];
     const ageSelectedPerson = selectedPersonDebugLi[1];
     // Assert
