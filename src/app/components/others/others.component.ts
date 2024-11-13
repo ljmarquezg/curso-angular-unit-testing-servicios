@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HighlightDirective } from '../../directivess/highlight.directive';
+import { HighlightDirective } from '../../directives/highlight.directive';
+import { ReversePipe } from '../../pipes/reverse.pipe';
 
 @Component({
   selector: 'app-others',
@@ -8,10 +9,12 @@ import { HighlightDirective } from '../../directivess/highlight.directive';
   imports: [
     HighlightDirective,
     FormsModule,
+    ReversePipe,
   ],
   templateUrl: './others.component.html',
   styleUrl: './others.component.scss'
 })
 export class OthersComponent {
   color = 'blue';
+  text = 'hello';
 }

@@ -15,6 +15,5 @@ export class AppComponent {
   ngOnInit() {
     const calculator = new Calculator();
     const respuesta = calculator.multiply(3, 3);
-    console.log(respuesta === 9)
   }
 }
