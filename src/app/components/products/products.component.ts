@@ -1,21 +1,40 @@
 import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
 import { Product } from '../../models/product.model';
 import { ProductsService } from '../../services/products.service';
+import { ProductComponent } from '../product/product.component';
 
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [],
+  imports: [
+    ProductComponent
+  ],
   templateUrl: './products.component.html',
   styleUrl: './products.component.scss'
 })
-export class ProductsComponent implements OnInit{
+export class ProductsComponent implements OnInit {
   private productsService = inject(ProductsService);
   products: WritableSignal<Product[]> = signal([]);
+  limit: number = 10;
+  offset: number = 0;
+  status: 'init' | 'loading' | 'error' | 'success' = 'init';
 
   ngOnInit() {
-    this.productsService.getAllSimple().subscribe(products => {
-      this.products.set(products)
+    this.getAllProducts();
+  }
+
+  getAllProducts(): void {
+    this.status = 'loading';
+    this.productsService.getAll(this.limit, this.offset).subscribe({
+      next: products => {
+        this.products.set([...this.products() , ...products]);
+        this.offset += this.limit;
+        this.status = 'success';
+      },
+      error: error => {
+        console.error(error);
+        this.status = 'error';
+      }
     });
   }
 

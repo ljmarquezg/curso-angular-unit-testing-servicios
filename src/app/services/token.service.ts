@@ -8,15 +8,22 @@ export class TokenService {
   constructor() { }
 
   saveToken(token: string) {
-    localStorage.setItem('token', token);
+    if(localStorage !== undefined) {
+      localStorage?.setItem('token', token);
+    }
   }
 
   getToken() {
-    const token = localStorage.getItem('token');
-    return token;
+    if(localStorage !== undefined) {
+      const token = localStorage?.getItem('token');
+      return token;
+    }
+    return 'token'
   }
 
   removeToken() {
-    localStorage.removeItem('token');
+    if(localStorage !== undefined) {
+      localStorage?.removeItem('token');
+    }
   }
 }
