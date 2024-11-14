@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
+import { getText, query, queryById } from '../../testing';
 import { HighlightDirective } from '../directives/highlight.directive';
 import { ReversePipe } from './reverse.pipe';
 
@@ -24,7 +25,6 @@ describe('ReversePipe', () => {
   });
 });
 
-
 @Component({
   selector: 'app-others',
   standalone: true,
@@ -34,12 +34,13 @@ describe('ReversePipe', () => {
     ReversePipe
   ],
   template: `
-    <h5>{{ 'amor' | reverse }}</h5>
+    <h5 data-testid="amor">{{ 'amor' | reverse }}</h5>
     <input
+      data-testid="input"
       type="text"
       [(ngModel)]="text"
     />
-    <p>{{text | reverse }}</p>
+    <p data-testid="text">{{ text | reverse }}</p>
   `,
 })
 class HostComponent {
@@ -65,23 +66,26 @@ describe('Reverse pipe from Host Component', () => {
   });
 
   it('should reverse h5 content', () => {
-    const h5Element = fixture.debugElement.query(By.css('h5'));
-    expect(h5Element.nativeElement.textContent).toBe('roma');
+    //const h5Element = fixture.debugElement.query(By.css('h5'));
+    //expect(h5Element.nativeElement.textContent).toBe('roma');
+    expect(getText(fixture, 'amor')).toBe('roma');
   });
 
   it('should reverse input value', () => {
     // Arrange
-    const debugElement = fixture.debugElement;
-    const inputElement: HTMLInputElement = debugElement.query(By.css('input')).nativeElement;
-    const paragraphElement: HTMLElement = debugElement.query(By.css('p')).nativeElement;
-    expect(paragraphElement.textContent).toBe('');
+    //const debugElement = fixture.debugElement;
+    //const inputElement: HTMLInputElement = debugElement.query(By.css('input')).nativeElement;
+    //const paragraphElement: HTMLElement = debugElement.query(By.css('p')).nativeElement;
+    const inputElement: HTMLInputElement = queryById(fixture, 'input').nativeElement;
+    const paragraphElement: HTMLElement = queryById(fixture, 'text').nativeElement;
+    expect(getText(fixture, 'input')).toBe('');
     // Act
     inputElement.value = 'roma';
     inputElement.dispatchEvent(new Event('input'));
     fixture.detectChanges();
     // Asert
     expect(inputElement.value).toBe('roma');
-    expect(paragraphElement.textContent).toBe('amor');
+    expect(getText(fixture, 'text')).toBe('amor');
   });
 
 });

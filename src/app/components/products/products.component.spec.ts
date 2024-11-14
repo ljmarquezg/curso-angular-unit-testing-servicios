@@ -1,6 +1,6 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { asyncData, asyncError, mockObservable } from '../../../testing';
+import { asyncData, asyncError, clickEvent, getText, mockObservable, query, queryById } from '../../../testing';
 import { generateManyProducts } from '../../models/product.mock';
 import { Product } from '../../models/product.model';
 import { ProductsService } from '../../services/products.service';
@@ -70,11 +70,11 @@ describe('ProductsComponent', () => {
         // Arrange
         const productsMock = generateManyProducts(3);
         productsService.getAll.and.returnValue(asyncData(productsMock));
-        const debugElement = fixture.debugElement;
-        const buttonDebugElement = debugElement.query(By.css('button.load-products'));
+        //const debugElement = fixture.debugElement;
+        //const buttonDebugElement = debugElement.query(By.css('button.load-products'));
         //Act
         //component.getAllProducts();
-        buttonDebugElement.triggerEventHandler('click', null);
+        clickEvent(fixture, 'btn-load-products', true);
         fixture.detectChanges();
         expect(component.status).toBe('loading');
         tick(4000); // exec, obs, setTimeout, setInterval, setInterval, Promise
@@ -88,11 +88,13 @@ describe('ProductsComponent', () => {
     it('should show error status', fakeAsync(() => {
         // Arrange
         productsService.getAll.and.returnValue(asyncError(new Error('Error')));
-        const debugElement = fixture.debugElement;
-        const buttonDebugElement = debugElement.query(By.css('button.load-products'));
+        // const debugElement = fixture.debugElement;
+        // const buttonDebugElement = debugElement.query(By.css('button.load-products'));
+        const buttonDebugElement = query(fixture, 'button.load-products');
         //Act
         //component.getAllProducts();
-        buttonDebugElement.triggerEventHandler('click', null);
+        //buttonDebugElement.triggerEventHandler('click', null);
+        clickEvent(fixture, 'btn-load-products', true);
         fixture.detectChanges();
         expect(component.status).toBe('loading');
         expect(buttonDebugElement.nativeElement.disabled).toBeTrue();
@@ -137,17 +139,17 @@ describe('ProductsComponent', () => {
         // Arrange
         const rtaMsg = 'my promise string';
         valueService.getPromiseValue.and.returnValue(Promise.resolve(rtaMsg));
-        const debugElement = fixture.debugElement;
-        const buttonDebugElement = debugElement.query(By.css('button.call-promise'));
+        const buttonDebugElement = queryById(fixture, 'btn-promise');
         buttonDebugElement.triggerEventHandler('click', null);
         // Act
         tick();
         fixture.detectChanges();
-        const promiseResponseElement = debugElement.query(By.css('.promise-response'))
+        //const promiseResponseElement = query(fixture, '.promise-response')
+        const textRta = getText(fixture, 'promise-response');
         // Assert
         expect(component.rta).toBe(rtaMsg);
         expect(valueService.getPromiseValue).toHaveBeenCalled();
-        expect(promiseResponseElement.nativeElement.textContent).toEqual(rtaMsg);
+        expect(textRta).toEqual(rtaMsg);
       })
     );
   });

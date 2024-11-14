@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { query, queryAll } from '../../../testing';
 import { Person } from '../../models/person.model';
 import { PeopleComponent } from './people.component';
 
@@ -9,9 +10,9 @@ describe('PeopleComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PeopleComponent]
-    })
-    .compileComponents();
+        imports: [PeopleComponent]
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(PeopleComponent);
     component = fixture.componentInstance;
@@ -45,7 +46,7 @@ describe('PeopleComponent', () => {
     ];
     // Act
     fixture.detectChanges();
-    const chooseButtonDebug = fixture.debugElement.query(By.css('app-person .btn-choose'))
+    const chooseButtonDebug = query(fixture, 'app-person .btn-choose');
     chooseButtonDebug.triggerEventHandler('click', null);
     fixture.detectChanges();
     // Assert
@@ -60,10 +61,10 @@ describe('PeopleComponent', () => {
       new Person('Valentina', 'Pérez', 25, 80, 1.75)
     ];
     fixture.detectChanges();
-    const chooseButtonDebug = fixture.debugElement.query(By.css('app-person .btn-choose'));
+    const chooseButtonDebug = query(fixture, 'app-person .btn-choose');
     chooseButtonDebug.triggerEventHandler('click', null);
     fixture.detectChanges();
-    const selectedPersonDebugLi = fixture.debugElement.queryAll(By.css('li'));
+    const selectedPersonDebugLi = queryAll(fixture, 'li');
     // Act
     const nameSelectedPerson = selectedPersonDebugLi[0];
     const ageSelectedPerson = selectedPersonDebugLi[1];
