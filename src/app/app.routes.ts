@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
+import { LoginFormComponent } from './components/auth/components/login-form/login-form.component';
+import { RegisterFormComponent } from './components/auth/components/register-form/register-form.component';
 import { OthersComponent } from './components/others/others.component';
 import { PeopleComponent } from './components/people/people.component';
-import { PersonComponent } from './components/person/person.component';
 import { PicoPreviewComponent } from './components/pico-preview/pico-preview.component';
 import { ProductsComponent } from './components/products/products.component';
 
@@ -21,5 +22,13 @@ export const routes: Routes = [
   {
     path: 'others',
     component: OthersComponent
+  },
+  {
+    path: 'login',
+    component: LoginFormComponent
+  },
+  {
+    path: 'register',
+    component: RegisterFormComponent
   }
 ];
