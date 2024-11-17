@@ -98,7 +98,7 @@
         <label for="terms">
           <input
             type="checkbox"
-            id="terms"
+            id="checkTerms"
             name="terms"
             formControlName="checkTerms"
             [attr.aria-invalid]="
@@ -108,7 +108,11 @@
           I agree to the Terms and Conditions
         </label>
       </fieldset>
-      <button type="submit">Register</button>
+      <button
+        data-testid="register-button"
+        [disabled]="status === 'loading'"
+        type="submit"
+      >Register</button>
     </div>
   </form>
 </section>

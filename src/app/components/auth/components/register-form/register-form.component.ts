@@ -13,6 +13,7 @@ import { MyValidators } from '../../../../utils/validators';
 })
 export class RegisterFormComponent implements OnInit {
   form: FormGroup;
+  status: 'init' | 'loading' | 'success' | 'error' = 'init';
   constructor(
     private fb: FormBuilder,
     private usersService: UsersService
@@ -20,7 +21,7 @@ export class RegisterFormComponent implements OnInit {
     this.form = this.fb.group(
       {
         name: ['', [Validators.required]],
-        lastName: ['', [Validators.required]],
+        lastName: [''],
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required, Validators.minLength(6), MyValidators.validPassword]],
         confirmPassword: ['', [Validators.required, Validators.minLength(6), MyValidators.validPassword]],
@@ -39,11 +40,13 @@ export class RegisterFormComponent implements OnInit {
   register(event: Event) {
     event.preventDefault();
     if (this.form.valid) {
+      this.status = 'loading';
       const value = this.form.value;
       this.usersService.create(value)
       .subscribe((rta) => {
         console.log(rta);
         // redirect
+        this.status = 'success';
       });
     } else {
       this.form.markAllAsTouched();

@@ -8,18 +8,40 @@ export function setInputValue<T>(
   value: string,
   withTestId: boolean = false,
 ) {
-let debugElement: DebugElement;
+  let debugElement: DebugElement;
 
-if(withTestId) {
-  debugElement = queryById(fixture, selector);
-} else {
-  debugElement = query(fixture, selector);
+  if (withTestId) {
+    debugElement = queryById(fixture, selector);
+  } else {
+    debugElement = query(fixture, selector);
+  }
+
+  const inputEl: HTMLInputElement = debugElement.nativeElement;
+
+  inputEl.value = value;
+  inputEl.dispatchEvent(new Event('input'));
+  inputEl.dispatchEvent(new Event('blur'));
+
 }
 
-const inputEl: HTMLInputElement = debugElement.nativeElement;
+export function setCheckboxValue<T>(
+  fixture: ComponentFixture<T>,
+  selector: string,
+  value: boolean,
+  withTestId: boolean = false,
+) {
+  let debugElement: DebugElement;
 
-inputEl.value = value;
-inputEl.dispatchEvent(new Event('input'));
-inputEl.dispatchEvent(new Event('blur'));
+  if (withTestId) {
+    debugElement = queryById(fixture, selector);
+  } else {
+    debugElement = query(fixture, selector);
+  }
+
+  const inputEl: HTMLInputElement = debugElement.nativeElement;
+
+  inputEl.checked = value;
+  inputEl.dispatchEvent(new Event('change'));
+  inputEl.dispatchEvent(new Event('blur'));
 
 }

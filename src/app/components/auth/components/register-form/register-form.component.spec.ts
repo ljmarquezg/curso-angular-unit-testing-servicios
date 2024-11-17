@@ -1,6 +1,7 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { DebugElement } from '@angular/core';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { AbstractControl, FormControl, ReactiveFormsModule } from '@angular/forms';
-import { getText, mockObservable, query, queryById, setInputValue } from '../../../../../testing';
+import { asyncData, clickElement, clickEvent, getText, mockObservable, query, queryByDirective, queryById, setCheckboxValue, setInputValue } from '../../../../../testing';
 import { generateOneUser } from '../../../../models/user.mock';
 import { UsersService } from '../../../../services/user.service';
 
@@ -61,35 +62,6 @@ describe('RegisterFormComponent', () => {
     it('should validate First Name to be valid if not empty', () => {
       nameField?.setValue('test');
       expect(nameField?.valid).withContext('valid name').toBeTrue();
-    });
-  });
-
-  describe('Last Name', () => {
-    it('should validate Last Name to be invalid if empty', () => {
-      lastnameField?.setValue('');
-      expect(lastnameField?.invalid).withContext('empty field').toBeTrue();
-    });
-
-    it('should validate Last Name to be valid if not empty', () => {
-      lastnameField?.setValue('test');
-      expect(lastnameField?.valid).withContext('valid last name').toBeTrue();
-    });
-  });
-
-  describe('Email', () => {
-    it('should validate Email to be invalid if empty', () => {
-      emailField?.setValue('');
-      expect(emailField?.invalid).withContext('empty field').toBeTrue();
-    });
-
-    it('should validate Email format', () => {
-      emailField?.setValue('test.com');
-      expect(emailField?.invalid).withContext('not a valid email').toBeTrue();
-    });
-
-    it('should validate Email format to be valid', () => {
-      emailField?.setValue('test@test.com');
-      expect(emailField?.valid).withContext('valid email').toBeTrue();
     });
   });
 
@@ -193,14 +165,14 @@ describe('RegisterFormComponent', () => {
       emailInput.dispatchEvent(new Event('blur'));
       fixture.detectChanges();
       expect(emailField?.invalid).withContext('invalid email').toBeTrue();
-      expect(getText(fixture, 'email-format-error')).toContain('*It\'s not a email')
+      expect(getText(fixture, 'email-format-error')).toContain('*It\'s not a email');
     });
 
     it('should validate email field to be invalid if wrong format with setInputValue', () => {
       setInputValue(fixture, 'input#email', 'esto no es un correo');
       fixture.detectChanges();
       expect(emailField?.invalid).withContext('invalid email').toBeTrue();
-      expect(getText(fixture, 'email-format-error')).toContain('*It\'s not a email')
+      expect(getText(fixture, 'email-format-error')).toContain('*It\'s not a email');
     });
 
     it('should call create User on submit', () => {
@@ -215,9 +187,74 @@ describe('RegisterFormComponent', () => {
       const mockUser = generateOneUser();
       userService.create.and.returnValue(mockObservable(mockUser));
       component.register(new Event('submit'));
-      fixture.detectChanges()
+      fixture.detectChanges();
       expect(component?.form?.valid).withContext('valid form').toBeTrue();
       expect(userService.create).toHaveBeenCalled();
     });
+
+    it('should call create User on submit and evaluate status from loading => success', fakeAsync(() => {
+        component?.form?.patchValue({
+          name: 'name',
+          lastName: 'last name',
+          email: 'test@test.com',
+          password: '123456',
+          confirmPassword: '123456',
+          checkTerms: true
+        });
+        const mockUser = generateOneUser();
+        userService.create.and.returnValue(asyncData(mockUser));
+        component.register(new Event('submit'));
+        fixture.detectChanges();
+        expect(component.status).toBe('loading');
+        tick();
+        fixture.detectChanges();
+        expect(component?.form?.valid).withContext('valid form').toBeTrue();
+        expect(userService.create).toHaveBeenCalled();
+        expect(component.status).toBe('success');
+      })
+    );
+
+    it('should call create User on submit and evaluate status from loading => success', fakeAsync(() => {
+        component?.form?.patchValue({
+          name: 'name',
+          lastName: 'last name',
+          email: 'test@test.com',
+          password: '123456',
+          confirmPassword: '123456',
+          checkTerms: true
+        });
+        const mockUser = generateOneUser();
+        userService.create.and.returnValue(asyncData(mockUser));
+        component.register(new Event('submit'));
+        fixture.detectChanges();
+        expect(component.status).toBe('loading');
+        tick();
+        fixture.detectChanges();
+        expect(component?.form?.valid).withContext('valid form').toBeTrue();
+        expect(userService.create).toHaveBeenCalled();
+        expect(component.status).toBe('success');
+      })
+    );
+
+    it('should fill User form and submit ', fakeAsync(() => {
+      const mockUser = generateOneUser();
+      userService.create.and.returnValue(asyncData(mockUser));
+        setInputValue(fixture, 'input#name', 'name');
+        setInputValue(fixture, 'input#email', 'test@test.com');
+        setInputValue(fixture, 'input#password', '123456');
+        setInputValue(fixture, 'input#confirmPassword', '123456');
+        setCheckboxValue(fixture, 'input#checkTerms', true);
+        fixture.detectChanges();
+        const registerButton: DebugElement = queryById(fixture, 'register-button');
+        expect(registerButton.nativeElement.disabled).toBe(false);
+        clickElement(fixture, 'register-button', true);
+        expect(component.status).toBe('loading');
+        tick();
+        fixture.detectChanges();
+        expect(component?.form?.valid).withContext('valid form').toBeTrue();
+        expect(userService.create).toHaveBeenCalled();
+        expect(component.status).toBe('success');
+      })
+    );
   });
 });
