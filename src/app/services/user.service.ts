@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 import { environment } from './../../environments/environment';
 import { User, CreateUserDTO } from './../models/user.model';
@@ -22,4 +23,9 @@ export class UsersService {
   getAll() {
     return this.http.get<User[]>(this.apiUrl);
   }
+
+  isAvailableByEmail( email: string): Observable<{ isAvailable: boolean }> {
+    return this.http.post<{ isAvailable: boolean }>(`${this.apiUrl}/is-available`, {email});
+  }
+
 }

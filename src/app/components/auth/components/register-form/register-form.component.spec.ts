@@ -29,7 +29,7 @@ describe('RegisterFormComponent', () => {
   let checkTermsField: AbstractControl | null;
 
   beforeEach(async () => {
-    const spyUserService = jasmine.createSpyObj('UsersService', ['create']);
+    const spyUserService = jasmine.createSpyObj('UsersService', ['create', 'isAvailableByEmail']);
     await TestBed.configureTestingModule({
         imports: [
           RegisterFormComponent,
@@ -54,6 +54,7 @@ describe('RegisterFormComponent', () => {
     passwordField = component.passwordField;
     confirmField = component.confirmPasswordField;
     checkTermsField = component.checkTermsField;
+    userService.isAvailableByEmail.and.returnValue(mockObservable({isAvailable: true}))
     fixture.detectChanges();
   });
 
@@ -285,5 +286,17 @@ describe('RegisterFormComponent', () => {
         expect(component.status).toBe('error');
       })
     );
+
+    it('sould show an error when an email is not available', () => {
+      // Arrange
+      userService.isAvailableByEmail.and.returnValue(mockObservable({ isAvailable: false }));
+      setInputValue(fixture, 'input#email', 'nico@test.com');
+      // Act
+      fixture.detectChanges();
+      // Assert
+      expect(emailField?.invalid).toBeTrue();
+      expect(userService.isAvailableByEmail).toHaveBeenCalledWith('nico@test.com');
+      expect(getText(fixture, 'email-not-available')).toContain('*Email is already registered');
+    });
   });
 });

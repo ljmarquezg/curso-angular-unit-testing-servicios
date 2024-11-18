@@ -23,7 +23,6 @@
             @if (nameField?.hasError('required')) {
               <small>*Required</small>
             }
-
           }
         </label>
 
@@ -43,6 +42,10 @@
             }
             @if (emailField?.hasError('email')) {
               <small data-testid="email-format-error">*It's not a email</small>
+            }
+
+            @if (emailField?.hasError('not_available')) {
+              <small data-testid="email-not-available">*Email is already registered</small>
             }
           }
         </label>
@@ -83,19 +86,19 @@
           formControlName="confirmPassword"
           [attr.aria-invalid]="
             confirmPasswordField?.touched
-              ? form?.hasError('match_password')
+              ? form.hasError('match_password')
               : ''
           "
         />
-        @if (confirmPasswordField?.touched && form?.errors) {
-          @if (form?.hasError('match_password')) {
+        @if (confirmPasswordField?.touched && form.errors) {
+          @if (form.hasError('match_password')) {
             <small>*Not matching</small>
           }
         }
       </label>
 
       <fieldset>
-        <label for="terms">
+        <label for="checkTerms">
           <input
             type="checkbox"
             id="checkTerms"

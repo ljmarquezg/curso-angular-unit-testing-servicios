@@ -23,7 +23,7 @@ export class RegisterFormComponent implements OnInit {
       {
         name: ['', [Validators.required]],
         lastName: [''],
-        email: ['', [Validators.required, Validators.email]],
+        email: ['', [Validators.required, Validators.email], [MyValidators.validateEmailAsync(this.usersService)]],
         password: ['', [Validators.required, Validators.minLength(6), MyValidators.validPassword]],
         confirmPassword: ['', [Validators.required, Validators.minLength(6), MyValidators.validPassword]],
         checkTerms: [false, [Validators.requiredTrue]],
