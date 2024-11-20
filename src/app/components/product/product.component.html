@@ -6,6 +6,9 @@
     >
     <h6>{{ product.title }}</h6>
     <p>{{ product.description }}</p>
-    <a [routerLink]="['./', product.id]">Ver detalle</a>
+    <a
+      [routerLink]="['./', product.id]"
+      [queryParams]="{typeCustomer: 'admin'}"
+    >Ver detalle</a>
   </div>
 }

@@ -100,5 +100,16 @@ fdescribe('ProductDetailComponent', () => {
       fixture.detectChanges();
       expect(component.status).toBe('success');
     }));
+
+    it('should typeCustomer be "customer"', async() => {
+      productService.getOne.and.returnValue(mockObservable(productMock));
+      component = await harness.navigateByUrl(`products/${productId}?type=customer`, ProductDetailComponent);
+      fixture.detectChanges();
+      // @ts-ignore
+      const queryParams = component.route.snapshot.queryParamMap;
+      expect(queryParams.has('type')).toBeTrue();
+      expect(queryParams.get('type')).toBe('customer');
+      expect(component.typeCustomer).toBe('customer');
+    });
   });
 });
