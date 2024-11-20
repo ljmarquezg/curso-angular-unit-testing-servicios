@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { UsersService } from '../../../../services/user.service';
 import { MyValidators } from '../../../../utils/validators';
 
@@ -17,7 +18,8 @@ export class RegisterFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private usersService: UsersService
+    private usersService: UsersService,
+    private router: Router,
   ) {
     this.form = this.fb.group(
       {
@@ -48,6 +50,7 @@ export class RegisterFormComponent implements OnInit {
             console.log(rta);
             // redirect
             this.status = 'success';
+            this.router.navigateByUrl('/login');
           },
           error: (err) => {
             console.log(err);

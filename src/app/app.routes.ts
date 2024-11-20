@@ -4,6 +4,7 @@ import { RegisterFormComponent } from './components/auth/components/register-for
 import { OthersComponent } from './components/others/others.component';
 import { PeopleComponent } from './components/people/people.component';
 import { PicoPreviewComponent } from './components/pico-preview/pico-preview.component';
+import { ProductDetailComponent } from './components/product-detail/product-detail.component';
 import { ProductsComponent } from './components/products/products.component';
 
 export const routes: Routes = [
@@ -30,5 +31,9 @@ export const routes: Routes = [
   {
     path: 'register',
     component: RegisterFormComponent
+  },
+  {
+    path: 'products/:id',
+    component: ProductDetailComponent
   }
 ];

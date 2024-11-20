@@ -1,6 +1,7 @@
 import { DebugElement } from '@angular/core';
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { AbstractControl, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import {
   asyncData,
   asyncError,
@@ -21,6 +22,7 @@ describe('RegisterFormComponent', () => {
   let component: RegisterFormComponent;
   let fixture: ComponentFixture<RegisterFormComponent>;
   let userService: jasmine.SpyObj<UsersService>;
+  let router: jasmine.SpyObj<Router>;
 
   let nameField: AbstractControl | null;
   let emailField: AbstractControl | null;
@@ -30,6 +32,7 @@ describe('RegisterFormComponent', () => {
 
   beforeEach(async () => {
     const spyUserService = jasmine.createSpyObj('UsersService', ['create', 'isAvailableByEmail']);
+    const spyRouter = jasmine.createSpyObj('Router', ['navigateByUrl']);
     await TestBed.configureTestingModule({
         imports: [
           RegisterFormComponent,
@@ -40,6 +43,10 @@ describe('RegisterFormComponent', () => {
             provide: UsersService,
             useValue: spyUserService
           },
+          {
+            provide: Router,
+            useValue: spyRouter
+          }
         ]
       })
       .compileComponents();
@@ -49,6 +56,7 @@ describe('RegisterFormComponent', () => {
     fixture = TestBed.createComponent(RegisterFormComponent);
     component = fixture.componentInstance;
     userService = TestBed.inject(UsersService) as jasmine.SpyObj<UsersService>;
+    router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
     nameField = component.nameField;
     emailField = component.emailField;
     passwordField = component.passwordField;
@@ -263,6 +271,7 @@ describe('RegisterFormComponent', () => {
         expect(component?.form?.valid).withContext('valid form').toBeTrue();
         expect(userService.create).toHaveBeenCalled();
         expect(component.status).toBe('success');
+        expect(router.navigateByUrl).toHaveBeenCalledWith('/login');
       })
     );
 

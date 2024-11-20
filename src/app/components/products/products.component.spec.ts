@@ -1,5 +1,7 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { RouterLink, RouterModule } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
 import { asyncData, asyncError, clickEvent, getText, mockObservable, query, queryById } from '../../../testing';
 import { generateManyProducts } from '../../models/product.mock';
 import { Product } from '../../models/product.model';
@@ -20,6 +22,7 @@ describe('ProductsComponent', () => {
     await TestBed.configureTestingModule({
         imports: [ProductsComponent],
         providers: [
+          RouterModule,
           {
             provide: ProductsService,
             useValue: productsServiceSpy
