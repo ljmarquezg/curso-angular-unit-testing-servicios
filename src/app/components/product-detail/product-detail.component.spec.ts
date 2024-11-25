@@ -10,7 +10,7 @@ import { ProductsService } from '../../services/product.service';
 import { ProductDetailComponent } from './product-detail.component';
 
 const productId = '1';
-fdescribe('ProductDetailComponent', () => {
+describe('ProductDetailComponent', () => {
   let component: ProductDetailComponent;
   let fixture: ComponentFixture<ProductDetailComponent>;
   let productService: jasmine.SpyObj<ProductsService>;

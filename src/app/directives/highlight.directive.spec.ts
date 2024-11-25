@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
+import { queryByDirective } from '../../testing';
 import { HighlightDirective } from './highlight.directive';
 
 @Component({
@@ -45,10 +46,10 @@ describe('HighlightDirective', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have three highlight elements', () => {
+  it('should have 4 highlight elements', () => {
     // Arrange
     const debugElement = fixture.debugElement;
-    const highlightElements = debugElement.queryAll(By.directive(HighlightDirective));
+    const highlightElements = queryByDirective(fixture, HighlightDirective);
     const highlightWithoutElements = debugElement.queryAll(By.css('*:not([highlight])'));
     //Act
     // Assert

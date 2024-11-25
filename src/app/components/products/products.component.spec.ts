@@ -1,7 +1,6 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { RouterLink, RouterModule } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
+import { RouterModule } from '@angular/router';
 import { asyncData, asyncError, clickEvent, getText, mockObservable, query, queryById } from '../../../testing';
 import { generateManyProducts } from '../../models/product.mock';
 import { Product } from '../../models/product.model';
@@ -20,9 +19,11 @@ describe('ProductsComponent', () => {
     const valueServiceSpy = jasmine.createSpyObj('ValueService', ['getPromiseValue']);
 
     await TestBed.configureTestingModule({
-        imports: [ProductsComponent],
+        imports: [
+          ProductsComponent,
+          RouterModule.forRoot([]),
+        ],
         providers: [
-          RouterModule,
           {
             provide: ProductsService,
             useValue: productsServiceSpy
