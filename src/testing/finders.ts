@@ -19,7 +19,7 @@ export function queryById<T>(fixture: ComponentFixture<T>, testId: string) {
   return query(fixture, selector);
 }
 
-export function queryByDirective<T, D>(fixture: ComponentFixture<T>, directive: Type<D>) {
+export function queryAllByDirective<T, D>(fixture: ComponentFixture<T>, directive: Type<D>) {
   return fixture.debugElement.queryAll(By.directive(directive));
 }
 

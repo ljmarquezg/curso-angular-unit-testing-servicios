@@ -47,7 +47,6 @@ export class RegisterFormComponent implements OnInit {
       this.usersService.create(value)
         .subscribe({
           next: (rta) => {
-            console.log(rta);
             // redirect
             this.status = 'success';
             this.router.navigateByUrl('/login');

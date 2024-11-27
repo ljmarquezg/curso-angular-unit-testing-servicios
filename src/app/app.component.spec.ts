@@ -1,8 +1,7 @@
 import { DebugElement } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { Router, RouterLink, RouterModule } from '@angular/router';
-import { queryByDirective } from '../testing';
+import { Router, RouterLink, RouterLinkWithHref, RouterModule } from '@angular/router';
+import { queryAllByDirective } from '../testing';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
@@ -26,20 +25,18 @@ describe('AppComponent', () => {
   });
 
   it('it should have 6 routerLinks', () => {
-    const links = queryByDirective(fixture, RouterLink);
+    const links = queryAllByDirective(fixture, RouterLinkWithHref);
     fixture.detectChanges();
     expect(links.length).toBe(6);
   });
 
   it('should have 6 routerLinks with the correct paths', () => {
-    const linkDebugElements: DebugElement[] = fixture.debugElement.queryAll(
-      By.directive(RouterLink)
-    );
+    const linkDebugElements: DebugElement[] = queryAllByDirective(fixture, RouterLinkWithHref);
 
     expect(linkDebugElements.length).toBe(6);
 
     const routerLinks = linkDebugElements.map(
-      (de) => de.injector.get(RouterLink)
+      (de) => de.injector.get(RouterLinkWithHref)
     );
     expect(TestBed.inject(Router).url).toEqual('/');
     expect(routerLinks[0].href).toBe('/');
@@ -51,9 +48,7 @@ describe('AppComponent', () => {
   });
 
   it('should navigate to the correct link when clicked', async () => {
-    const linkDebugElements: DebugElement[] = fixture.debugElement.queryAll(
-      By.directive(RouterLink)
-    );
+    const linkDebugElements: DebugElement[] = queryAllByDirective(fixture, RouterLinkWithHref);
     expect(linkDebugElements.length).toBe(6);
     const homeLink = linkDebugElements[0].injector.get(RouterLink);
     linkDebugElements[0].nativeElement.click();

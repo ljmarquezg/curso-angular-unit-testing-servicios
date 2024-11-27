@@ -6,7 +6,7 @@ import { HighlightDirective } from './directives/highlight.directive';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, HighlightDirective, RouterModule],
+  imports: [RouterLink, HighlightDirective, RouterModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

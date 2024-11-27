@@ -33,6 +33,9 @@ module.exports = function (config) {
       ]
     },
     reporters: ['mocha'],
+    mochaReporter: {
+      ignoreSkipped: true,
+    },
     browsers: ['Chrome'],
     restartOnFileChange: true,
     customLaunchers: {
