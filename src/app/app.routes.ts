@@ -6,6 +6,7 @@ import { PeopleComponent } from './components/people/people.component';
 import { PicoPreviewComponent } from './components/pico-preview/pico-preview.component';
 import { ProductDetailComponent } from './components/product-detail/product-detail.component';
 import { ProductsComponent } from './components/products/products.component';
+import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -22,7 +23,8 @@ export const routes: Routes = [
   },
   {
     path: 'others',
-    component: OthersComponent
+    component: OthersComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: 'login',

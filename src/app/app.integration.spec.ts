@@ -6,7 +6,10 @@ import { routes } from './app.routes';
 import { OthersComponent } from './components/others/others.component';
 import { PeopleComponent } from './components/people/people.component';
 import { PicoPreviewComponent } from './components/pico-preview/pico-preview.component';
-import { clickElement, query, queryAllByDirective } from '../testing';
+import { asyncData, clickElement, getText, mockObservable, query, queryAllByDirective, queryById } from '../testing';
+import { generateManyProducts } from './models/product.mock';
+import { generateOneUser } from './models/user.mock';
+import { AuthService } from './services/auth.service';
 import { ProductsService } from './services/product.service'; // Utility functions for testing
 
 describe('App Integration Test', () => {
@@ -14,8 +17,11 @@ describe('App Integration Test', () => {
   let component: AppComponent;
   let router: Router;
   let productsService: jasmine.SpyObj<ProductsService>;
+  let authService: jasmine.SpyObj<AuthService>;
 
   beforeEach(fakeAsync(() => {
+    const productsServiceSpy = jasmine.createSpyObj('ProductsService', ['getAll']);
+    const authServiceSpy = jasmine.createSpyObj('AuthService', ['getUser'])
     TestBed.configureTestingModule({
       imports: [
         AppComponent,
@@ -28,7 +34,11 @@ describe('App Integration Test', () => {
         provideHttpClient(withInterceptorsFromDi()),
         {
           provide: ProductsService,
-          useValue: jasmine.createSpyObj('ProductsService', ['getAll'])
+          useValue: productsServiceSpy
+        },
+        {
+          provide: AuthService,
+          useValue: authServiceSpy
         }
       ]
     });
@@ -37,6 +47,7 @@ describe('App Integration Test', () => {
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
     productsService = TestBed.inject(ProductsService) as jasmine.SpyObj<ProductsService>;
+    authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
     router.initialNavigation();
     tick();
     fixture.detectChanges();
@@ -52,13 +63,39 @@ describe('App Integration Test', () => {
     expect(links.length).toEqual(6);
   });
 
-  it('should navigate to "others" route', fakeAsync(() => {
+  it('should navigate to "others" route if user has session', fakeAsync(() => {
+    const mockUser = generateOneUser();
+    authService.getUser.and.returnValue(mockObservable(mockUser));
+
+    const productsMock = generateManyProducts(10);
+    productsService.getAll.and.returnValue(asyncData(productsMock))
+
     clickElement(fixture, 'others-link', true);
     tick(); // Wait for navigation to complete
     fixture.detectChanges();
     expect(router.url).toEqual('/others'); // Assert current URL
+
+    tick(); // Wait for data to be fetched
+    fixture.detectChanges();
+
     const element = query(fixture, 'app-others');
     expect(element).not.toBeNull();
+
+    expect(productsService.getAll).toHaveBeenCalled();
+    const text = getText(fixture, 'total-products');
+    expect(text).toBe('Total Products: 10');
+  }));
+
+  it('should navigate to "home" if user does not have a session', fakeAsync(() => {
+    authService.getUser.and.returnValue(mockObservable(null));
+
+    clickElement(fixture, 'others-link', true);
+    tick(); // Wait for navigation to complete
+    fixture.detectChanges();
+    expect(router.url).toEqual('/'); // Assert current URL
+
+    tick(); // Wait for data to be fetched
+    fixture.detectChanges();
   }));
 
   it('should navigate to "pico-preview" route', fakeAsync(() => {
@@ -69,4 +106,23 @@ describe('App Integration Test', () => {
     const element = query(fixture, 'app-pico-preview');
     expect(element).not.toBeNull();
   }));
+
+ /* it('should navigate to "products" route', fakeAsync(() => {
+    clickElement(fixture, 'products-link', true);
+    const productsMock = generateManyProducts(10);
+    productsService.getAll.and.returnValue(asyncData(productsMock))
+    tick(); // Wait for navigation to complete
+    fixture.detectChanges();
+    expect(router.url).toEqual('/products'); // Assert current URL
+
+    tick(); // Wait for data to be fetched
+    fixture.detectChanges();
+
+    const element = query(fixture, 'app-products');
+    expect(element).not.toBeNull();
+
+    expect(productsService.getAll).toHaveBeenCalled();
+    const text = getText(fixture, 'total-products');
+    expect(text).toBe('Total Products: 10');
+  }));*/
 });

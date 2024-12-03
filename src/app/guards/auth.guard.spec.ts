@@ -71,7 +71,7 @@ describe('Test for AuthGuard', () => {
 
     guard.canActivate(activatedRouteSnapshot, routerStateSnapshot).subscribe((res) => {
       expect(res).toBeFalse();
-      expect(routerStub.navigate).toHaveBeenCalledWith(['/home']);
+      expect(routerStub.navigate).toHaveBeenCalledWith(['/']);
       doneFn();
     });
   });
@@ -87,7 +87,7 @@ describe('Test for AuthGuard', () => {
 
     guard.canActivate(activatedRouteSnapshot, routerStateSnapshot).subscribe((res) => {
       expect(res).toBeFalse();
-      expect(routerStub.navigate).toHaveBeenCalledWith(['/home']);
+      expect(routerStub.navigate).toHaveBeenCalledWith(['/']);
       doneFn();
     });
   });
